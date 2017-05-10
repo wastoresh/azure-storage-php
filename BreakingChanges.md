@@ -1,3 +1,8 @@
+Tracking Breaking changes in 0.16.0
+
+Queue
+* Renamed `MicrosoftAzure\Storage\Queue\Models\MicrosoftAzureQueueMessage` to `MicrosoftAzure\Storage\Queue\Models\QueueMessage`
+
 Tracking Breaking changes in 0.15.0
 
 All
