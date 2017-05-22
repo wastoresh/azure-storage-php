@@ -276,11 +276,12 @@ class Resources
     // Header values
     const SDK_VERSION                                   = '0.15.0';
     const STORAGE_API_LATEST_VERSION                    = '2015-04-05';
-    const DATA_SERVICE_VERSION_VALUE                    = '1.0;NetFx';
-    const MAX_DATA_SERVICE_VERSION_VALUE                = '2.0;NetFx';
+    const DATA_SERVICE_VERSION_VALUE                    = '3.0';
+    const MAX_DATA_SERVICE_VERSION_VALUE                = '3.0;NetFx';
     const ACCEPT_HEADER_VALUE                           = 'application/atom+xml,application/xml';
     const ATOM_ENTRY_CONTENT_TYPE                       = 'application/atom+xml;type=entry;charset=utf-8';
     const ATOM_FEED_CONTENT_TYPE                        = 'application/atom+xml;type=feed;charset=utf-8';
+    const JSON_FULL_METADATA_CONTENT_TYPE               = 'application/json;odata=fullmetadata';
     const ACCEPT_CHARSET_VALUE                          = 'utf-8';
     const INT32_MAX                                     = 2147483647;
 

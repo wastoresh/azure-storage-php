@@ -55,7 +55,7 @@ use MicrosoftAzure\Storage\Table\Models\BatchOperationParameterName;
 use MicrosoftAzure\Storage\Table\Models\BatchResult;
 use MicrosoftAzure\Storage\Table\Models\TableACL;
 use MicrosoftAzure\Storage\Common\Internal\Http\HttpFormatter;
-use MicrosoftAzure\Storage\Table\Internal\IAtomReaderWriter;
+use MicrosoftAzure\Storage\Table\Internal\IODataReaderWriter;
 use MicrosoftAzure\Storage\Table\Internal\IMimeReaderWriter;
 use MicrosoftAzure\Storage\Common\Internal\Serialization\ISerializer;
 
@@ -75,9 +75,9 @@ class TableRestProxy extends ServiceRestProxy implements ITable
     use ServiceRestTrait;
 
     /**
-     * @var Internal\IAtomReaderWriter
+     * @var Internal\IODataReaderWriter
      */
-    private $_atomSerializer;
+    private $_odataSerializer;
 
     /**
      *
@@ -352,7 +352,7 @@ class TableRestProxy extends ServiceRestProxy implements ITable
         $partitionKey = $entity->getPartitionKey();
         $rowKey       = $entity->getRowKey();
         $path         = $this->_getEntityPath($table, $partitionKey, $rowKey);
-        $body         = $this->_atomSerializer->getEntity($entity);
+        $body         = $this->_odataSerializer->getEntity($entity);
 
         if (is_null($options)) {
             $options = new TableServiceOptions();
@@ -365,10 +365,16 @@ class TableRestProxy extends ServiceRestProxy implements ITable
             $this->addOptionalHeader($headers, Resources::IF_MATCH, $ifMatchValue);
         }
 
+        // TODO: support payload format options
         $this->addOptionalHeader(
             $headers,
             Resources::CONTENT_TYPE,
-            Resources::XML_ATOM_CONTENT_TYPE
+            Resources::JSON_CONTENT_TYPE
+        );
+        $this->addOptionalHeader(
+            $headers,
+            Resources::ACCEPT_HEADER,
+            Resources::JSON_FULL_METADATA_CONTENT_TYPE
         );
 
         $options->setLocationMode(LocationMode::PRIMARY_ONLY);
@@ -409,16 +415,22 @@ class TableRestProxy extends ServiceRestProxy implements ITable
         $queryParams = array();
         $statusCode  = Resources::STATUS_CREATED;
         $path        = $table;
-        $body        = $this->_atomSerializer->getEntity($entity);
+        $body        = $this->_odataSerializer->getEntity($entity);
 
         if (is_null($options)) {
             $options = new TableServiceOptions();
         }
 
+        // TODO: support payload format options
         $this->addOptionalHeader(
             $headers,
             Resources::CONTENT_TYPE,
-            Resources::XML_ATOM_CONTENT_TYPE
+            Resources::JSON_CONTENT_TYPE
+        );
+        $this->addOptionalHeader(
+            $headers,
+            Resources::ACCEPT_HEADER,
+            Resources::JSON_FULL_METADATA_CONTENT_TYPE
         );
 
         $options->setLocationMode(LocationMode::PRIMARY_ONLY);
@@ -629,17 +641,17 @@ class TableRestProxy extends ServiceRestProxy implements ITable
     /**
      * Initializes new TableRestProxy object.
      *
-     * @param string            $primaryUri     The storage account primary uri.
-     * @param string            $secondaryUri   The storage account secondary uri.
-     * @param IAtomReaderWriter $atomSerializer The atom serializer.
-     * @param IMimeReaderWriter $mimeSerializer The MIME serializer.
-     * @param ISerializer       $dataSerializer The data serializer.
-     * @param array             $options        Array of options to pass to the service
+     * @param string              $primaryUri      The storage account primary uri.
+     * @param string              $secondaryUri    The storage account secondary uri.
+     * @param IODataReaderWriter  $odataSerializer The odata serializer.
+     * @param IMimeReaderWriter   $mimeSerializer  The MIME serializer.
+     * @param ISerializer         $dataSerializer  The data serializer.
+     * @param array               $options        Array of options to pass to the service
      */
     public function __construct(
         $primaryUri,
         $secondaryUri,
-        IAtomReaderWriter $atomSerializer,
+        IODataReaderWriter $odataSerializer,
         IMimeReaderWriter $mimeSerializer,
         ISerializer $dataSerializer,
         array $options = []
@@ -651,7 +663,7 @@ class TableRestProxy extends ServiceRestProxy implements ITable
             $dataSerializer,
             $options
         );
-        $this->_atomSerializer = $atomSerializer;
+        $this->_odataSerializer = $odataSerializer;
         $this->_mimeSerializer = $mimeSerializer;
     }
 
@@ -742,6 +754,11 @@ class TableRestProxy extends ServiceRestProxy implements ITable
             Resources::QP_NEXT_TABLE_NAME,
             $next
         );
+        $this->addOptionalHeader(
+            $headers,
+            Resources::ACCEPT_HEADER,
+            Resources::JSON_FULL_METADATA_CONTENT_TYPE
+        );
 
         // One can specify the NextTableName option to get table entities starting
         // from the specified name. However, there appears to be an issue in the
@@ -754,7 +771,7 @@ class TableRestProxy extends ServiceRestProxy implements ITable
             $queryParams[Resources::QP_FILTER] = Resources::EMPTY_STRING;
         }
 
-        $atomSerializer = $this->_atomSerializer;
+        $odataSerializer = $this->_odataSerializer;
 
         return $this->sendAsync(
             $method,
@@ -765,8 +782,8 @@ class TableRestProxy extends ServiceRestProxy implements ITable
             Resources::STATUS_OK,
             Resources::EMPTY_STRING,
             $options
-        )->then(function ($response) use ($atomSerializer) {
-            $tables = $atomSerializer->parseTableEntries($response->getBody());
+        )->then(function ($response) use ($odataSerializer) {
+            $tables = $odataSerializer->parseTableEntries($response->getBody());
             return QueryTablesResult::create(
                 HttpFormatter::formatHeaders($response->getHeaders()),
                 $tables
@@ -811,16 +828,22 @@ class TableRestProxy extends ServiceRestProxy implements ITable
         $postParams  = array();
         $queryParams = array();
         $path        = 'Tables';
-        $body        = $this->_atomSerializer->getTable($table);
+        $body        = $this->_odataSerializer->getTable($table);
 
         if (is_null($options)) {
             $options = new TableServiceOptions();
         }
 
+        // TODO: support payload format options
         $this->addOptionalHeader(
             $headers,
             Resources::CONTENT_TYPE,
-            Resources::XML_ATOM_CONTENT_TYPE
+            Resources::JSON_CONTENT_TYPE
+        );
+        $this->addOptionalHeader(
+            $headers,
+            Resources::ACCEPT_HEADER,
+            Resources::JSON_FULL_METADATA_CONTENT_TYPE
         );
 
         $options->setLocationMode(LocationMode::PRIMARY_ONLY);
@@ -875,13 +898,19 @@ class TableRestProxy extends ServiceRestProxy implements ITable
             $options = new TableServiceOptions();
         }
 
+        // TODO: support payload format options
         $this->addOptionalHeader(
             $headers,
             Resources::CONTENT_TYPE,
-            Resources::XML_ATOM_CONTENT_TYPE
+            Resources::JSON_CONTENT_TYPE
+        );
+        $this->addOptionalHeader(
+            $headers,
+            Resources::ACCEPT_HEADER,
+            Resources::JSON_FULL_METADATA_CONTENT_TYPE
         );
 
-        $atomSerializer = $this->_atomSerializer;
+        $odataSerializer = $this->_odataSerializer;
 
         return $this->sendAsync(
             $method,
@@ -892,8 +921,8 @@ class TableRestProxy extends ServiceRestProxy implements ITable
             Resources::STATUS_OK,
             Resources::EMPTY_STRING,
             $options
-        )->then(function ($response) use ($atomSerializer) {
-            return GetTableResult::create($response->getBody(), $atomSerializer);
+        )->then(function ($response) use ($odataSerializer) {
+            return GetTableResult::create($response->getBody(), $odataSerializer);
         }, null);
     }
 
@@ -1016,10 +1045,16 @@ class TableRestProxy extends ServiceRestProxy implements ITable
             $options->getNextRowKey()
         );
 
+        // TODO: support payload format options
         $this->addOptionalHeader(
             $headers,
             Resources::CONTENT_TYPE,
-            Resources::XML_ATOM_CONTENT_TYPE
+            Resources::JSON_CONTENT_TYPE
+        );
+        $this->addOptionalHeader(
+            $headers,
+            Resources::ACCEPT_HEADER,
+            Resources::JSON_FULL_METADATA_CONTENT_TYPE
         );
 
         if (!is_null($options->getQuery())) {
@@ -1032,7 +1067,7 @@ class TableRestProxy extends ServiceRestProxy implements ITable
             }
         }
 
-        $atomSerializer = $this->_atomSerializer;
+        $odataSerializer = $this->_odataSerializer;
 
         return $this->sendAsync(
             $method,
@@ -1043,8 +1078,8 @@ class TableRestProxy extends ServiceRestProxy implements ITable
             Resources::STATUS_OK,
             Resources::EMPTY_STRING,
             $options
-        )->then(function ($response) use ($atomSerializer) {
-            $entities = $atomSerializer->parseEntities($response->getBody());
+        )->then(function ($response) use ($odataSerializer) {
+            $entities = $odataSerializer->parseEntities($response->getBody());
 
             return QueryEntitiesResult::create(
                 HttpFormatter::formatHeaders($response->getHeaders()),
@@ -1094,16 +1129,16 @@ class TableRestProxy extends ServiceRestProxy implements ITable
             $options
         );
 
-        $atomSerializer = $this->_atomSerializer;
+        $odataSerializer = $this->_odataSerializer;
 
         return $this->sendContextAsync($context)->then(
-            function ($response) use ($atomSerializer) {
+            function ($response) use ($odataSerializer) {
                 $body     = $response->getBody();
                 $headers  = HttpFormatter::formatHeaders($response->getHeaders());
                 return InsertEntityResult::create(
                     $body,
                     $headers,
-                    $atomSerializer
+                    $odataSerializer
                 );
             },
             null
@@ -1405,10 +1440,16 @@ class TableRestProxy extends ServiceRestProxy implements ITable
             $options = new TableServiceOptions();
         }
 
+        // TODO: support payload format options
         $this->addOptionalHeader(
             $headers,
             Resources::CONTENT_TYPE,
-            Resources::XML_ATOM_CONTENT_TYPE
+            Resources::JSON_CONTENT_TYPE
+        );
+        $this->addOptionalHeader(
+            $headers,
+            Resources::ACCEPT_HEADER,
+            Resources::JSON_FULL_METADATA_CONTENT_TYPE
         );
 
         $context = new HttpCallContext();
@@ -1419,13 +1460,13 @@ class TableRestProxy extends ServiceRestProxy implements ITable
         $context->setStatusCodes(array(Resources::STATUS_OK));
         $context->setServiceOptions($options);
 
-        $atomSerializer = $this->_atomSerializer;
+        $odataSerializer = $this->_odataSerializer;
 
         return $this->sendContextAsync($context)->then(
-            function ($response) use ($atomSerializer) {
+            function ($response) use ($odataSerializer) {
                 return GetEntityResult::create(
                     $response->getBody(),
-                    $atomSerializer
+                    $odataSerializer
                 );
             },
             null
@@ -1475,10 +1516,16 @@ class TableRestProxy extends ServiceRestProxy implements ITable
             $options = new TableServiceOptions();
         }
 
-        $atomSerializer = $this->_atomSerializer;
+        $odataSerializer = $this->_odataSerializer;
         $mimeSerializer = $this->_mimeSerializer;
 
         $options->setLocationMode(LocationMode::PRIMARY_ONLY);
+
+        $this->addOptionalHeader(
+            $headers,
+            Resources::ACCEPT_HEADER,
+            Resources::JSON_FULL_METADATA_CONTENT_TYPE
+        );
 
         return $this->sendAsync(
             $method,
@@ -1492,14 +1539,14 @@ class TableRestProxy extends ServiceRestProxy implements ITable
         )->then(function ($response) use (
             $operations,
             $contexts,
-            $atomSerializer,
+            $odataSerializer,
             $mimeSerializer
         ) {
             return BatchResult::create(
                 $response->getBody(),
                 $operations,
                 $contexts,
-                $atomSerializer,
+                $odataSerializer,
                 $mimeSerializer
             );
         }, null);

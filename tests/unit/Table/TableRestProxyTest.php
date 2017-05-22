@@ -24,7 +24,7 @@
 
 namespace MicrosoftAzure\Storage\Tests\Unit\Table;
 
-use MicrosoftAzure\Storage\Table\Internal\AtomReaderWriter;
+use MicrosoftAzure\Storage\Table\Internal\JsonODataReaderWriter;
 use MicrosoftAzure\Storage\Table\Internal\MimeReaderWriter;
 use MicrosoftAzure\Storage\Tests\Framework\TableServiceRestProxyTestBase;
 use MicrosoftAzure\Storage\Common\Internal\Utilities;
@@ -100,7 +100,7 @@ class TableRestProxyTest extends TableServiceRestProxyTestBase
     
     /**
      * @covers MicrosoftAzure\Storage\Table\TableRestProxy::createTable
-     * @covers MicrosoftAzure\Storage\Table\Internal\AtomReaderWriter::getTable
+     * @covers MicrosoftAzure\Storage\Table\Internal\JsonODataReaderWriter::getTable
      * @covers MicrosoftAzure\Storage\Common\Internal\ServiceRestProxy::sendContext
      */
     public function testCreateTable()
@@ -119,8 +119,7 @@ class TableRestProxyTest extends TableServiceRestProxyTestBase
     /**
      * @covers MicrosoftAzure\Storage\Table\TableRestProxy::getTable
      * @covers MicrosoftAzure\Storage\Common\Internal\ServiceRestProxy::sendContext
-     * @covers MicrosoftAzure\Storage\Table\Internal\AtomReaderWriter::parseTable
-     * @covers MicrosoftAzure\Storage\Table\Internal\AtomReaderWriter::_parseBody
+     * @covers MicrosoftAzure\Storage\Table\Internal\JsonODataReaderWriter::parseTable
      * @covers MicrosoftAzure\Storage\Table\Models\GetTableResult::create
      */
     public function testGetTable()
@@ -163,8 +162,7 @@ class TableRestProxyTest extends TableServiceRestProxyTestBase
      * @covers MicrosoftAzure\Storage\Table\TableRestProxy::_encodeODataUriValue
      * @covers MicrosoftAzure\Storage\Table\Models\EdmType::serializeQueryValue
      * @covers MicrosoftAzure\Storage\Table\Models\QueryTablesResult::create
-     * @covers MicrosoftAzure\Storage\Table\Internal\AtomReaderWriter::_parseBody
-     * @covers MicrosoftAzure\Storage\Table\Internal\AtomReaderWriter::parseTableEntries
+     * @covers MicrosoftAzure\Storage\Table\Internal\JsonODataReaderWriter::parseTableEntries
      * @covers MicrosoftAzure\Storage\Common\Internal\ServiceRestProxy::sendContext
      */
     public function testQueryTablesSimple()
@@ -194,8 +192,7 @@ class TableRestProxyTest extends TableServiceRestProxyTestBase
      * @covers MicrosoftAzure\Storage\Table\TableRestProxy::_encodeODataUriValue
      * @covers MicrosoftAzure\Storage\Table\Models\EdmType::serializeQueryValue
      * @covers MicrosoftAzure\Storage\Table\Models\QueryTablesResult::create
-     * @covers MicrosoftAzure\Storage\Table\Internal\AtomReaderWriter::_parseBody
-     * @covers MicrosoftAzure\Storage\Table\Internal\AtomReaderWriter::parseTableEntries
+     * @covers MicrosoftAzure\Storage\Table\Internal\JsonODataReaderWriter::parseTableEntries
      * @covers MicrosoftAzure\Storage\Common\Internal\ServiceRestProxy::sendContext
      */
     public function testQueryTablesOneTable()
@@ -222,8 +219,7 @@ class TableRestProxyTest extends TableServiceRestProxyTestBase
      * @covers MicrosoftAzure\Storage\Table\TableRestProxy::_encodeODataUriValue
      * @covers MicrosoftAzure\Storage\Table\Models\EdmType::serializeQueryValue
      * @covers MicrosoftAzure\Storage\Table\Models\QueryTablesResult::create
-     * @covers MicrosoftAzure\Storage\Table\Internal\AtomReaderWriter::_parseBody
-     * @covers MicrosoftAzure\Storage\Table\Internal\AtomReaderWriter::parseTableEntries
+     * @covers MicrosoftAzure\Storage\Table\Internal\JsonODataReaderWriter::parseTableEntries
      * @covers MicrosoftAzure\Storage\Common\Internal\ServiceRestProxy::sendContext
      */
     public function testQueryTablesEmpty()
@@ -245,8 +241,7 @@ class TableRestProxyTest extends TableServiceRestProxyTestBase
      * @covers MicrosoftAzure\Storage\Table\TableRestProxy::_encodeODataUriValue
      * @covers MicrosoftAzure\Storage\Table\Models\EdmType::serializeQueryValue
      * @covers MicrosoftAzure\Storage\Table\Models\QueryTablesResult::create
-     * @covers MicrosoftAzure\Storage\Table\Internal\AtomReaderWriter::_parseBody
-     * @covers MicrosoftAzure\Storage\Table\Internal\AtomReaderWriter::parseTableEntries
+     * @covers MicrosoftAzure\Storage\Table\Internal\JsonODataReaderWriter::parseTableEntries
      * @covers MicrosoftAzure\Storage\Common\Internal\ServiceRestProxy::sendContext
      */
     public function testQueryTablesWithPrefix()
@@ -282,8 +277,7 @@ class TableRestProxyTest extends TableServiceRestProxyTestBase
      * @covers MicrosoftAzure\Storage\Table\TableRestProxy::_encodeODataUriValue
      * @covers MicrosoftAzure\Storage\Table\Models\EdmType::serializeQueryValue
      * @covers MicrosoftAzure\Storage\Table\Models\QueryTablesResult::create
-     * @covers MicrosoftAzure\Storage\Table\Internal\AtomReaderWriter::_parseBody
-     * @covers MicrosoftAzure\Storage\Table\Internal\AtomReaderWriter::parseTableEntries
+     * @covers MicrosoftAzure\Storage\Table\Internal\JsonODataReaderWriter::parseTableEntries
      * @covers MicrosoftAzure\Storage\Common\Internal\ServiceRestProxy::sendContext
      */
     public function testQueryTablesWithStringOption()
@@ -318,8 +312,7 @@ class TableRestProxyTest extends TableServiceRestProxyTestBase
      * @covers MicrosoftAzure\Storage\Table\TableRestProxy::_encodeODataUriValue
      * @covers MicrosoftAzure\Storage\Table\Models\EdmType::serializeQueryValue
      * @covers MicrosoftAzure\Storage\Table\Models\QueryTablesResult::create
-     * @covers MicrosoftAzure\Storage\Table\Internal\AtomReaderWriter::_parseBody
-     * @covers MicrosoftAzure\Storage\Table\Internal\AtomReaderWriter::parseTableEntries
+     * @covers MicrosoftAzure\Storage\Table\Internal\JsonODataReaderWriter::parseTableEntries
      * @covers MicrosoftAzure\Storage\Common\Internal\ServiceRestProxy::sendContext
      */
     public function testQueryTablesWithFilterOption()
@@ -359,10 +352,8 @@ class TableRestProxyTest extends TableServiceRestProxyTestBase
      * @covers MicrosoftAzure\Storage\Table\TableRestProxy::insertEntity
      * @covers MicrosoftAzure\Storage\Table\TableRestProxy::_constructInsertEntityContext
      * @covers MicrosoftAzure\Storage\Table\Models\EdmType::serializeValue
-     * @covers MicrosoftAzure\Storage\Table\Internal\AtomReaderWriter::_parseBody
-     * @covers MicrosoftAzure\Storage\Table\Internal\AtomReaderWriter::getEntity
-     * @covers MicrosoftAzure\Storage\Table\Internal\AtomReaderWriter::parseEntity
-     * @covers MicrosoftAzure\Storage\Table\Internal\AtomReaderWriter::_parseOneEntity
+     * @covers MicrosoftAzure\Storage\Table\Internal\JsonODataReaderWriter::getEntity
+     * @covers MicrosoftAzure\Storage\Table\Internal\JsonODataReaderWriter::parseEntity
      * @covers MicrosoftAzure\Storage\Table\Models\InsertEntityResult::create
      * @covers MicrosoftAzure\Storage\Common\Internal\ServiceRestProxy::sendContext
      */
@@ -386,9 +377,7 @@ class TableRestProxyTest extends TableServiceRestProxyTestBase
     
     /**
      * @covers MicrosoftAzure\Storage\Table\TableRestProxy::queryEntities
-     * @covers MicrosoftAzure\Storage\Table\Internal\AtomReaderWriter::_parseBody
-     * @covers MicrosoftAzure\Storage\Table\Internal\AtomReaderWriter::parseEntities
-     * @covers MicrosoftAzure\Storage\Table\Internal\AtomReaderWriter::_parseOneEntity
+     * @covers MicrosoftAzure\Storage\Table\Internal\JsonODataReaderWriter::parseEntities
      * @covers MicrosoftAzure\Storage\Common\Internal\ServiceRestProxy::sendContext
      */
     public function testQueryEntitiesWithEmpty()
@@ -407,9 +396,7 @@ class TableRestProxyTest extends TableServiceRestProxyTestBase
     
     /**
      * @covers MicrosoftAzure\Storage\Table\TableRestProxy::queryEntities
-     * @covers MicrosoftAzure\Storage\Table\Internal\AtomReaderWriter::_parseBody
-     * @covers MicrosoftAzure\Storage\Table\Internal\AtomReaderWriter::parseEntities
-     * @covers MicrosoftAzure\Storage\Table\Internal\AtomReaderWriter::_parseOneEntity
+     * @covers MicrosoftAzure\Storage\Table\Internal\JsonODataReaderWriter::parseEntities
      * @covers MicrosoftAzure\Storage\Common\Internal\ServiceRestProxy::sendContext
      */
     public function testQueryEntitiesWithOneEntity()
@@ -438,9 +425,7 @@ class TableRestProxyTest extends TableServiceRestProxyTestBase
      * @covers MicrosoftAzure\Storage\Table\TableRestProxy::_addOptionalQuery
      * @covers MicrosoftAzure\Storage\Table\TableRestProxy::_encodeODataUriValues
      * @covers MicrosoftAzure\Storage\Table\TableRestProxy::_encodeODataUriValue
-     * @covers MicrosoftAzure\Storage\Table\Internal\AtomReaderWriter::_parseBody
-     * @covers MicrosoftAzure\Storage\Table\Internal\AtomReaderWriter::parseEntities
-     * @covers MicrosoftAzure\Storage\Table\Internal\AtomReaderWriter::_parseOneEntity
+     * @covers MicrosoftAzure\Storage\Table\Internal\JsonODataReaderWriter::parseEntities
      * @covers MicrosoftAzure\Storage\Common\Internal\ServiceRestProxy::sendContext
      */
     public function testQueryEntitiesQueryStringOption()
@@ -475,9 +460,7 @@ class TableRestProxyTest extends TableServiceRestProxyTestBase
      * @covers MicrosoftAzure\Storage\Table\TableRestProxy::_addOptionalQuery
      * @covers MicrosoftAzure\Storage\Table\TableRestProxy::_encodeODataUriValues
      * @covers MicrosoftAzure\Storage\Table\TableRestProxy::_encodeODataUriValue
-     * @covers MicrosoftAzure\Storage\Table\Internal\AtomReaderWriter::_parseBody
-     * @covers MicrosoftAzure\Storage\Table\Internal\AtomReaderWriter::parseEntities
-     * @covers MicrosoftAzure\Storage\Table\Internal\AtomReaderWriter::_parseOneEntity
+     * @covers MicrosoftAzure\Storage\Table\Internal\JsonODataReaderWriter::parseEntities
      * @covers MicrosoftAzure\Storage\Common\Internal\ServiceRestProxy::sendContext
      */
     public function testQueryEntitiesFilterOption()
@@ -513,9 +496,7 @@ class TableRestProxyTest extends TableServiceRestProxyTestBase
      * @covers MicrosoftAzure\Storage\Table\TableRestProxy::_addOptionalQuery
      * @covers MicrosoftAzure\Storage\Table\TableRestProxy::_encodeODataUriValues
      * @covers MicrosoftAzure\Storage\Table\TableRestProxy::_encodeODataUriValue
-     * @covers MicrosoftAzure\Storage\Table\Internal\AtomReaderWriter::_parseBody
-     * @covers MicrosoftAzure\Storage\Table\Internal\AtomReaderWriter::parseEntities
-     * @covers MicrosoftAzure\Storage\Table\Internal\AtomReaderWriter::_parseOneEntity
+     * @covers MicrosoftAzure\Storage\Table\Internal\JsonODataReaderWriter::parseEntities
      * @covers MicrosoftAzure\Storage\Common\Internal\ServiceRestProxy::sendContext
      */
     public function testQueryEntitiesWithMultipleEntities()
@@ -558,9 +539,7 @@ class TableRestProxyTest extends TableServiceRestProxyTestBase
      * @covers MicrosoftAzure\Storage\Table\TableRestProxy::_addOptionalQuery
      * @covers MicrosoftAzure\Storage\Table\TableRestProxy::_encodeODataUriValues
      * @covers MicrosoftAzure\Storage\Table\TableRestProxy::_encodeODataUriValue
-     * @covers MicrosoftAzure\Storage\Table\Internal\AtomReaderWriter::_parseBody
-     * @covers MicrosoftAzure\Storage\Table\Internal\AtomReaderWriter::parseEntities
-     * @covers MicrosoftAzure\Storage\Table\Internal\AtomReaderWriter::_parseOneEntity
+     * @covers MicrosoftAzure\Storage\Table\Internal\JsonODataReaderWriter::parseEntities
      * @covers MicrosoftAzure\Storage\Common\Internal\ServiceRestProxy::sendContext
      */
     public function testQueryEntitiesWithGetTop()
@@ -597,8 +576,7 @@ class TableRestProxyTest extends TableServiceRestProxyTestBase
      * @covers MicrosoftAzure\Storage\Table\TableRestProxy::_putOrMergeEntityImpl
      * @covers MicrosoftAzure\Storage\Table\TableRestProxy::_constructPutOrMergeEntityContext
      * @covers MicrosoftAzure\Storage\Table\Models\EdmType::serializeValue
-     * @covers MicrosoftAzure\Storage\Table\Internal\AtomReaderWriter::_parseBody
-     * @covers MicrosoftAzure\Storage\Table\Internal\AtomReaderWriter::getEntity
+     * @covers MicrosoftAzure\Storage\Table\Internal\JsonODataReaderWriter::getEntity
      * @covers MicrosoftAzure\Storage\Table\Models\UpdateEntityResult::create
      * @covers MicrosoftAzure\Storage\Common\Internal\ServiceRestProxy::sendContext
      */
@@ -631,10 +609,8 @@ class TableRestProxyTest extends TableServiceRestProxyTestBase
      * @covers MicrosoftAzure\Storage\Table\TableRestProxy::insertEntity
      * @covers MicrosoftAzure\Storage\Table\TableRestProxy::_constructInsertEntityContext
      * @covers MicrosoftAzure\Storage\Table\Models\EdmType::serializeValue
-     * @covers MicrosoftAzure\Storage\Table\Internal\AtomReaderWriter::_parseBody
-     * @covers MicrosoftAzure\Storage\Table\Internal\AtomReaderWriter::getEntity
-     * @covers MicrosoftAzure\Storage\Table\Internal\AtomReaderWriter::parseEntity
-     * @covers MicrosoftAzure\Storage\Table\Internal\AtomReaderWriter::_parseOneEntity
+     * @covers MicrosoftAzure\Storage\Table\Internal\JsonODataReaderWriter::getEntity
+     * @covers MicrosoftAzure\Storage\Table\Internal\JsonODataReaderWriter::parseEntity
      * @covers MicrosoftAzure\Storage\Table\Models\InsertEntityResult::create
      * @covers MicrosoftAzure\Storage\Common\Internal\ServiceRestProxy::sendContext
      */
@@ -667,8 +643,7 @@ class TableRestProxyTest extends TableServiceRestProxyTestBase
      * @covers MicrosoftAzure\Storage\Table\TableRestProxy::_putOrMergeEntityImpl
      * @covers MicrosoftAzure\Storage\Table\TableRestProxy::_constructPutOrMergeEntityContext
      * @covers MicrosoftAzure\Storage\Table\Models\EdmType::serializeValue
-     * @covers MicrosoftAzure\Storage\Table\Internal\AtomReaderWriter::_parseBody
-     * @covers MicrosoftAzure\Storage\Table\Internal\AtomReaderWriter::getEntity
+     * @covers MicrosoftAzure\Storage\Table\Internal\JsonODataReaderWriter::getEntity
      * @covers MicrosoftAzure\Storage\Table\Models\UpdateEntityResult::create
      * @covers MicrosoftAzure\Storage\Common\Internal\ServiceRestProxy::sendContext
      */
@@ -702,8 +677,7 @@ class TableRestProxyTest extends TableServiceRestProxyTestBase
      * @covers MicrosoftAzure\Storage\Table\TableRestProxy::_getEntityPath
      * @covers MicrosoftAzure\Storage\Table\TableRestProxy::_putOrMergeEntityImpl
      * @covers MicrosoftAzure\Storage\Table\TableRestProxy::_constructPutOrMergeEntityContext
-     * @covers MicrosoftAzure\Storage\Table\Internal\AtomReaderWriter::_parseBody
-     * @covers MicrosoftAzure\Storage\Table\Internal\AtomReaderWriter::getEntity
+     * @covers MicrosoftAzure\Storage\Table\Internal\JsonODataReaderWriter::getEntity
      * @covers MicrosoftAzure\Storage\Table\Models\UpdateEntityResult::create
      * @covers MicrosoftAzure\Storage\Common\Internal\ServiceRestProxy::sendContext
      */
@@ -739,8 +713,7 @@ class TableRestProxyTest extends TableServiceRestProxyTestBase
      * @covers MicrosoftAzure\Storage\Table\TableRestProxy::_getEntityPath
      * @covers MicrosoftAzure\Storage\Table\TableRestProxy::_putOrMergeEntityImpl
      * @covers MicrosoftAzure\Storage\Table\TableRestProxy::_constructPutOrMergeEntityContext
-     * @covers MicrosoftAzure\Storage\Table\Internal\AtomReaderWriter::_parseBody
-     * @covers MicrosoftAzure\Storage\Table\Internal\AtomReaderWriter::getEntity
+     * @covers MicrosoftAzure\Storage\Table\Internal\JsonODataReaderWriter::getEntity
      * @covers MicrosoftAzure\Storage\Table\Models\UpdateEntityResult::create
      * @covers MicrosoftAzure\Storage\Common\Internal\ServiceRestProxy::sendContext
      */
@@ -823,9 +796,7 @@ class TableRestProxyTest extends TableServiceRestProxyTestBase
     
     /**
      * @covers MicrosoftAzure\Storage\Table\TableRestProxy::getEntity
-     * @covers MicrosoftAzure\Storage\Table\Internal\AtomReaderWriter::_parseBody
-     * @covers MicrosoftAzure\Storage\Table\Internal\AtomReaderWriter::parseEntity
-     * @covers MicrosoftAzure\Storage\Table\Internal\AtomReaderWriter::_parseOneEntity
+     * @covers MicrosoftAzure\Storage\Table\Internal\JsonODataReaderWriter::parseEntity
      * @covers MicrosoftAzure\Storage\Common\Internal\ServiceRestProxy::sendContext
      */
     public function testGetEntity()
